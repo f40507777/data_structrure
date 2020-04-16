@@ -35,11 +35,11 @@ extension Heap {
             if let right = maybeValue(rightIndex) {
                 if isMax {
                     if right > left {
-                        return right
+                        return rightIndex
                     }
                 } else {
                     if right < left {
-                        return right
+                        return rightIndex
                     }
                 }
                 
@@ -65,12 +65,11 @@ extension Heap {
         let leftChildIndex = (index * 2) + 1
         let rightChildIndex = (index * 2) + 2
         guard let childIndex = compareIndex(leftIndex: leftChildIndex, rightIndex: rightChildIndex) else { return }
-        if (isMax && currentArray[childIndex] > currentValue) ||
-            (!isMax && currentArray[childIndex] < currentValue) {
+        let childValue = currentArray[childIndex]
+        if isNeedSwap(parent: currentValue, child: childValue, isUp: false) {
             currentArray.swapAt(childIndex, index)
             bubbleDown(childIndex)
         }
-
 
     }
 
@@ -89,17 +88,17 @@ extension Heap {
         let parentIndex: Int = Int((index + 1) / 2) - 1
         let parentValue = currentArray[parentIndex]
         let currentValue = currentArray[index]
-        if isNeedSwap(parent: parentValue, current: currentValue) {
+        if isNeedSwap(parent: parentValue, child: currentValue, isUp: true) {
             currentArray.swapAt(parentIndex, index)
             swapIfNeeded(index: parentIndex)
         }
     }
     
-    private func isNeedSwap(parent: Int, current: Int) -> Bool {
-        if isMax  {
-            return parent < current
+    private func isNeedSwap(parent: Int, child: Int, isUp: Bool) -> Bool {
+        if isMax == isUp  {
+            return parent < child
         }
-        return parent > current
+        return parent > child
     }
 }
 
@@ -116,13 +115,13 @@ class HeapTests: XCTestCase {
         let heap = Heap(isMax: true, input: input)
         XCTAssertEqual(heap.output, [5, 3, 4, 1, 2])
     }
-    
+
     func testMinPoll() {
         let input = [5, 1, 4, 2, 3]
         let heap = Heap(isMax: false, input: input)
         XCTAssertEqual(heap.poll, 1)
     }
-    
+
     func testMaxPoll() {
         let input = [5, 1, 4, 2, 3]
         let heap = Heap(isMax: true, input: input)
