@@ -10,6 +10,7 @@ class Heap {
         self.isMax = isMax
         self.input = input
         update()
+//        heapify()
     }
     
     var output: [Int] {
@@ -69,6 +70,8 @@ extension Heap {
         let currentValue = currentArray[index]
         let leftChildIndex = getLeftChildIndex(index)
         let rightChildIndex = getRightChildIndex(index)
+
+
         guard let childIndex = compareIndex(leftIndex: leftChildIndex, rightIndex: rightChildIndex) else { return }
         let childValue = currentArray[childIndex]
         if isNeedSwap(parent: currentValue, child: childValue) {
@@ -76,6 +79,25 @@ extension Heap {
             bubbleDown(childIndex)
         }
     }
+    
+//    private func bubbleDown(_ index: Int) {
+//        if currentArray.count == 0 { return }
+//        var currentIndex = index
+//        var isContinue = true
+//
+//        while isContinue {
+//            let currentValue = currentArray[currentIndex]
+//            let leftChildIndex = getLeftChildIndex(currentIndex)
+//            let rightChildIndex = getRightChildIndex(currentIndex)
+//            if let childIndex = compareIndex(leftIndex: leftChildIndex, rightIndex: rightChildIndex),
+//                isNeedSwap(parent: currentValue, child: currentArray[childIndex]) {
+//                currentArray.swapAt(childIndex, index)
+//                currentIndex = childIndex
+//            } else {
+//                isContinue = false
+//            }
+//        }
+//    }
     
     private func isNeedSwap(parent: Int, child: Int) -> Bool {
         return isMax != (parent > child)
@@ -138,6 +160,15 @@ extension Heap {
         }
     }
 
+    private func heapify() {
+        currentArray = input
+        if input.count < 2 { return }
+        let firstIndex = (input.count / 2 - 1)
+        for index in (0...firstIndex).reversed() {
+            bubbleDown(index)
+        }
+    }
+    
 }
 
 class HeapTests: XCTestCase {
@@ -147,7 +178,7 @@ class HeapTests: XCTestCase {
         let heap = Heap(isMax: false, input: input)
         XCTAssertEqual(heap.output, [1, 2, 4, 5, 3])
     }
-
+    
     func testMaxHeap() {
         let input = [5, 1, 4, 2, 3]
         let heap = Heap(isMax: true, input: input)
@@ -172,7 +203,7 @@ class HeapTests: XCTestCase {
         heap.insert(0)
         XCTAssertEqual(heap.currentArray, [0, 2, 1, 5, 3, 4])
     }
-    
+
     func testMaxInsert() {
         let input = [5, 1, 4, 2, 3]
         let heap = Heap(isMax: true, input: input)
@@ -180,7 +211,7 @@ class HeapTests: XCTestCase {
         heap.currentArray
         XCTAssertEqual(heap.currentArray, [9, 3, 5, 1, 2, 4])
     }
-    
+
     func testMinRemove() {
         let input = [5, 1, 4, 2, 3]
         let heap = Heap(isMax: false, input: input)
@@ -192,7 +223,7 @@ class HeapTests: XCTestCase {
         heap.remove(1)
         XCTAssertEqual(heap.currentArray, [2, 3])
     }
-    
+
     func testMaxRemove() {
         let input = [5, 1, 4, 2, 3]
         let heap = Heap(isMax: true, input: input)
@@ -208,14 +239,14 @@ class HeapTests: XCTestCase {
         XCTAssertEqual(heap.currentArray, [])
 
     }
-    
+
     func testRemoveNotExist() {
         let input = [5, 1, 4, 2, 3]
         let heap = Heap(isMax: true, input: input)
         heap.remove(33333)
         XCTAssertEqual(heap.currentArray, [5, 3, 4, 1, 2])
     }
-    
+
     func testOverPoll() {
         let input = [2, 3]
         let heap = Heap(isMax: true, input: input)
